@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="shortcut icon" href="https://img.icons8.com/nolan/96/coronavirus.png" type="image/x-icon">
+</head>
+
+<body onload="init()">
+  <div class="bg-dark background-size: auto">
+    <div class="bg-dark bg-transparent">
+      <h1 class="text-justify text-center p-3 mb-5 bg-transparent font-weight-bold text-white">COVID-19 Dashboard<br>
+        ---IND---</h1>
+      <h5 class="text-justify text-center mb-3 bg-transperent text-success" id="last-updated"
+        style="text-decoration: underline;"></h5>
+    </div>
+    <form>
+      <div class="container">
+        <div class="card-deck col-sm">
+          <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+            <div class="card-header text-center font-weight-bold">ACTIVE</div>
+            <div class="card-body">
+              <h2 class="card-title text-center font-weight-bold" id="active-tt"></h2>
+            </div>
+          </div>
+          <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+            <div class="card-header text-center font-weight-bold">CONFIRMED</div>
+            <div class="card-body">
+              <h2 class="card-title text-center font-weight-bold" id="confirmed-tt"></h2>
+            </div>
+          </div>
+          <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+            <div class="card-header text-center font-weight-bold">RECOVERED</div>
+            <div class="card-body">
+              <h2 class="card-title text-center font-weight-bold" id="recovered-tt"></h2>
+            </div>
+          </div>
+          <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+            <div class="card-header text-center font-weight-bold">DEATHS</div>
+            <div class="card-body">
+              <h2 class="card-title text-center font-weight-bold" id="deaths-tt"></h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <h5 class="text-justify text-center p-5 mb-3 bg-transperent text-success" id="lastupdated"
+      style="text-decoration: underline;"></h5>
+    <div class="container">
+      <div class="btn-group">
+        <select class="browser-default custom-select mb-5" id="slct" onchange="updateStateValues(this)">
+          <option selected>Karnataka</option>
+          {% for item in data %}
+          <option value='{{item}}'>{{item}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="container">
+      <div class="card-deck col-sm">
+        <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+          <div class="card-header text-center font-weight-bold">ACTIVE</div>
+          <div class="card-body">
+            <h2 class="card-title text-center font-weight-bold" id="active-st"></h2>
+          </div>
+        </div>
+        <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+          <div class="card-header text-center font-weight-bold">CONFIRMED</div>
+          <div class="card-body">
+            <h2 class="card-title text-center font-weight-bold" id="confirmed-st"></h2>
+          </div>
+        </div>
+        <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+          <div class="card-header text-center font-weight-bold">RECOVERED</div>
+          <div class="card-body">
+            <h2 class="card-title text-center font-weight-bold" id="recovered-st"></h2>
+          </div>
+        </div>
+        <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+          <div class="card-header text-center font-weight-bold">DEATHS</div>
+          <div class="card-body">
+            <h2 class="card-title text-center font-weight-bold" id="deaths-st"></h2>
+          </div>
+        </div>
+      </div>
+      <div class="p-5 mb-3 text-center text-white">
+        <h5 class="font-weight-bold">Designed and Developed by:- Guru Bhat</h5>
+        <h8>Image & Icon Credits:- Icons8 & Photo by Mona Eendra on Unsplash </h8>
+      </div>
+    </div>
+  </div>
+  <!-- Optional JavaScript -->
+  <script type="text/javascript">
+    // Calls the update_values function for a given interval
+    var intervalID = setInterval(update_values, 3600000);
+    // This function fetches the overall data and updates the HTML components
+    function update_values() {
+      fetch('http://0.0.0.0:5000/covid_data/Total')
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          document.getElementById("active-tt").innerHTML = data['active']
+          document.getElementById("confirmed-tt").innerHTML = data['confirmed']
+          document.getElementById("recovered-tt").innerHTML = data['recovered']
+          document.getElementById("deaths-tt").innerHTML = data['deaths']
+          document.getElementById("last-updated").innerHTML = data['lastupdatedtime']
+        });
+    };
+
+    // This functions fetches state wise data and updates HTML components 
+    function updateStateValues(state) {
+      fetch(`http://0.0.0.0:5000/covid_data/${state.value}`)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          document.getElementById("active-st").innerHTML = data['active']
+          document.getElementById("confirmed-st").innerHTML = data['confirmed']
+          document.getElementById("recovered-st").innerHTML = data['recovered']
+          document.getElementById("deaths-st").innerHTML = data['deaths']
+          document.getElementById("lastupdated").innerHTML = data['lastupdatedtime']
+        });
+    }
+    // init function to call 2 of the below functions in body load
+    function init() {
+      update_values()
+      var state = document.getElementById('slct');
+      updateStateValues(state)
+    }
+  </script>
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

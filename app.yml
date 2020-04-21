@@ -1,0 +1,6 @@
+runtime: python
+threadsafe: true
+entrypoint: gunicorn --bind 0.0.0.0:80 wsgi:app
+
+runtime_config:
+  python_version: 3.7
