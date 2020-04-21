@@ -101,7 +101,7 @@
     var intervalID = setInterval(update_values, 3600000);
     // This function fetches the overall data and updates the HTML components
     function update_values() {
-      fetch('http://0.0.0.0:5000/covid_data/Total')
+      fetch('http://localhost:5000/covid_data/Total')
         .then((response) => {
           return response.json();
         })
@@ -116,7 +116,7 @@
 
     // This functions fetches state wise data and updates HTML components 
     function updateStateValues(state) {
-      fetch(`http://0.0.0.0:5000/covid_data/${state.value}`)
+      fetch(`http://localhost:5000/covid_data/${state.value}`)
         .then((response) => {
           return response.json();
         })
